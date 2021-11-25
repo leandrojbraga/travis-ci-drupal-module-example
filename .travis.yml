@@ -1,38 +1,38 @@
 language: php
 dist: trusty
 sudo: required
+
 php:
-- 5.6
-- hhvm
-matrix:
-  fast_finish: true
-  allow_failures:
-  - php: hhvm
+  - 5.6
 mysql:
   database: travis_ci_drupal_module_example_test
   username: root
   encoding: utf8
+
 addons:
   apt:
     update: true
+
 install:
-- sudo apt-get install -y --force-yes php5-cgi php5-mysql
-- export PATH="$HOME/.config/composer/vendor/bin:$PATH"
-- composer global require drush/drush:6.*
+  - sudo apt-get install -y --force-yes php5-cgi php5-mysql
+  - export PATH="$HOME/.config/composer/vendor/bin:$PATH"
+  - composer global require drush/drush:6.*
 before_script:
-- cd ../..
-- mysql -e 'create database travis_ci_drupal_module_example_test'
-- php -d sendmail_path=`which true` ~/.config/composer/vendor/bin/drush.php --yes
+  - cd ../..
+  - mysql -e 'create database travis_ci_drupal_module_example_test'
+  - php -d sendmail_path=`which true` ~/.config/composer/vendor/bin/drush.php --yes
   core-quick-drupal --profile=testing --no-server --db-url=mysql://root:@127.0.0.1/travis_ci_drupal_module_example_test
   --enable=simpletest travis_ci_drupal_module_example_test
-- ln -s $(readlink -e $(cd -)) travis_ci_drupal_module_example_test/drupal/sites/all/modules/travis_ci_drupal_module_example
-- cd travis_ci_drupal_module_example_test/drupal
-- drush --yes pm-enable travis_ci_drupal_module_example
-- drush runserver 127.0.0.1:8080 &
-- until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
+  - ln -s $(readlink -e $(cd -)) travis_ci_drupal_module_example_test/drupal/sites/all/modules/travis_ci_drupal_module_example
+  - cd travis_ci_drupal_module_example_test/drupal
+  - drush --yes pm-enable travis_ci_drupal_module_example
+  - drush runserver 127.0.0.1:8080 &
+  - until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
+
 script: drush test-run 'Travis-CI Drupal Module Example' --uri=http://127.0.0.1:8080
+
 deploy:
   provider: heroku
   api_key:
-    secure: DKTUbhWCLOazOqzlIqeBywECtSVUjCoElsgJhGav3IAbAjWY3pu4GjZ0nYsM6QvLE5944fAsC1tI9DTS7S54q0LJ4/fOzcNSsLTuPU7fToP+55kDOJQBsK/tHOnuPIddBShcSLPaOfCaAAmZBvfpch0ZquHzUrw+REMoh1xFJZAe+2L0e1Ckgrj8ZDc7zgIwgjxgmxK17ZlakpzgoJOtvqxWOw31qDLs3Rnbtl+59djuB5mF7opVcz6iNgpCOUYXesf4JuHChbp4a3eyxeWDxPAAvZsEdahpbHeB+mH+MWETHUYnYL19VEpptkpQwDosvFqYxqoCVzyUg4WobN7zVpE/d358hX9jqc8/23jcUY76mD02ES4lW0vd8hZqh7TxU4eUKAwMaq4k/GOih9qkvb/a9Y2YN5uOUJTcsd3TrTJrfVTyr/Uyd9dYVl6Q3PbQg+j9LHKIHH1dUdljNiNbEWqZmZ841Ap/7jfa7vrojGonSqc7oN/10ppULPHgUAc/eihY6S6oNN5htp36VKgv7uHBsjzoqTJxFaBAHH1Hc9ndscaDYR1cxi8FaJbv/3UKwzLCQrZc9aQ2DUV4KKy4Kj204jsBIYSMxgoy6jeVxYUnFboFaELKFirnBtbYCPwl92jtrjlyMbNFiA6mGLNCBR+k0zIcrBZ5kvc0NvRPvlM=
+    secure: GOxWpw/v9IyBD7WB7CgULPxtPcN3EaMwCC8qrYla5lsbCcg0Br5nRQ3gAIU6qtYTgWkXoBOIv5lGPMTyWP5dcOpYC1+AgrulaVrEF7AP29Adp5I+kX+JJ7m2Mv/7dy5/Uli1Vw+6ZhOiXR+E2C9HiwZr7ZtNewo653sW3fslDMBTtPGXGHhtHYkNw6cj4XikxjGa1+dXobveOHAnVFYP1tx5g2MXA5omQavR//OugCbOjiTNkVn+xRWgZYk8PZQ+D3fqly2SJ2SFLFlVoGjeUV3My8N+7+o3/2kLpI4IqbTHgzs6J1+KOg7RpYHPaI3uxS80DBdeU6D9CF8gQb/XFaw0BhIz2s88zoW8JO5i044aSR6YGupJ3/0r85WoXo2xzW+a2UHY178GVF/tpgu94BZO8SRdULoqgTxv/9wNRSs88Usa/pSxfKBVwUofgTYRjBRGW8C5evqzMIyfxMMD+Vz2e3QT8F+gbcNTft9JrSZnWbK8gnEOr1aWwozQHEocj6fmoJxYgegKUtVKS3w/NSmZEop47M7m5a3vFQvolilyFZW247k9t45zDIdr+xS+UhQhu+H6kdA2yRcHGxgoJN0f5srlPcISolNWxzVI98y1vnxf/HrELKPdN556iUrN5KijOM8QVEDZQ/KhP3Sg/1fqVjhcKJN7aN/cLJIc4TA=
   app: travis-deploy-drupal
