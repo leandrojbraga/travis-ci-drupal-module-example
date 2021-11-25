@@ -3,6 +3,7 @@ dist: trusty
 sudo: required
 php:
 - 5.6
+
 mysql:
   database: travis_ci_drupal_module_example_test
   username: root
