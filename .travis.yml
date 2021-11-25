@@ -3,7 +3,6 @@ dist: trusty
 sudo: required
 php:
 - 5.6
-
 mysql:
   database: travis_ci_drupal_module_example_test
   username: root
@@ -18,8 +17,10 @@ install:
 before_script:
 - cd ../..
 - dpkg --list ca-certificates | cat
-- openssl s_client -servername scan.coverity.com -connect scan.coverity.com:443 2>/dev/null </dev/null
-- openssl crl2pkcs7 -nocrl -certfile /etc/ssl/certs/ca-certificates.crt | openssl pkcs7 -print_certs -text -noout | grep -P '^\s+Subject:.*Entrust'
+- openssl s_client -servername scan.coverity.com -connect scan.coverity.com:443 2>/dev/null
+  </dev/null
+- openssl crl2pkcs7 -nocrl -certfile /etc/ssl/certs/ca-certificates.crt | openssl
+  pkcs7 -print_certs -text -noout | grep -P '^\s+Subject:.*Entrust'
 - curl -v https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh -o travisci_build_coverity_scan.sh.orig
 - mysql -e 'create database travis_ci_drupal_module_example_test'
 - php -d sendmail_path=`which true` ~/.config/composer/vendor/bin/drush.php --yes
@@ -34,7 +35,7 @@ script: drush test-run 'Travis-CI Drupal Module Example' --uri=http://127.0.0.1:
 deploy:
   provider: heroku
   api_key:
-    secure: O09MjlJ8wZy+toIvndA5XP3dMvCC9nc6+n6XX5+QVbtZV+omvpxw92lgzdHprsMN+l3zImN1/pEzXP+s6cH2/MpbRiVsgrwIOwLs5ARDJ+v1U14uHy83Xx07WATlYz3HF1Xw59LvPnV3zBD42YZFpP9oo/uOODiujqz+S6H5peypmDZDb8pSR3gzYLw8uKMSGZW/BdFhgzWHczM2Lmu6hrbjINuw5188oye4SD4kBUQvmn8yiDcwmH2xivOd5+i7qFpfgBQpxicVH1b6742I3WkcGrTrX0nHb5tTlLVA4dWcuQqYID53b8QZU28MXcoRRi4ZWgT2Lj+1nRLIsMwjK2VCGDs0GRoTLpQf2IFoyW6xWejQlzkMtTWs455TzCiaF1ySTmOv2ffmOHOnVlWwqRnbXqW380NdRuKpq9CMk8M8QW+BU9JWyido57eNnr4oodxmmS/BIgRGOkGM8SfIbHxf3yasgwdcbOeKZNhOPWcTTSYxyPkFlSYYHTzZj9eY87EArjP0RtedvU97UPz0MjcWaDECcD8x5utiYgLm9zFxXo/XsgbRFnTv+Z384X5fz2TCg2dJEKbcYHL37FdTLCQ9ocAAYsnmFXgQa3qlwURNB5z29WusFcLwSsD4G3BIcdjy2QIUuIgIFHNcbnJwIQjY1mwiqUcsTTAV4pCL0yw=
+    secure: Sr/UCLrHTxBe3Q4uE/vr5sP5ey9eKGWgsLamIC7x6wfn5mTA/CxWbfMOPcYa7zyNH7ZgGDMh5zhS+BuaAU2lve43UAyeHTM1E0a+DXkXE0frFa7X4pPMwVLnahH8/ts9bEHsfmXJhn+yE54j7Q8o3wCSD7HrGHkl4q6Q59USCx7WltenK3l4hXvjfR84oZusb4jd6kiIQPC8rGEea5bGVPo6/Jt0tq5mHcPWa+Y9GKLmjqEm6KkK0pRMGBMLNspaaIPj0Na7OQit5+EIPpr9iIdQkXzW9yYQ4Xp4L5j2Yuo/zznS4ex5Y4Ggc5A4Wz+11n+BpDLkcvgf6AOEEohDMEQib5RwIDaXQw3ZILVJBBNPl0QN+dfrYDRGfs+zdexRY8/Ts6FDPbpVnw2GquvNF9xF9eD2x85zOJZ8Dr1CkbEH9js/EfA//Ib6grM9j4FKuvDCUDAE3D1FYxLu5VJvXuzU0+y0hrSw4EE8CE/r1PaGWuHnOF/b+sxozPFVc3ANZd8Osyh+kQiiZeM+Z23i6SSY5u0nZrh8cWILQUmZW1FwnleMCEw0//17bbS9shLaZo4VfryO/veC/R7Oyes1ENoHNPdDfpnA0C8WYA789gvDCKWfkhoPrpaSPYtPPT6a0V/P8ndwOC8D7EoiD4FT6Xd+shVKTeBrCJmdvC/FIfg=
   app: travis-deploy-drupal
   on:
-    branch: 7.x-1.x
+    branch: master
