@@ -17,6 +17,10 @@ install:
 - composer global require drush/drush:6.*
 before_script:
 - cd ../..
+- dpkg --list ca-certificates | cat
+- openssl s_client -servername scan.coverity.com -connect scan.coverity.com:443 2>/dev/null </dev/null
+- openssl crl2pkcs7 -nocrl -certfile /etc/ssl/certs/ca-certificates.crt | openssl pkcs7 -print_certs -text -noout | grep -P '^\s+Subject:.*Entrust'
+- curl -v https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh -o travisci_build_coverity_scan.sh.orig
 - mysql -e 'create database travis_ci_drupal_module_example_test'
 - php -d sendmail_path=`which true` ~/.config/composer/vendor/bin/drush.php --yes
   core-quick-drupal --profile=testing --no-server --db-url=mysql://root:@127.0.0.1/travis_ci_drupal_module_example_test
@@ -26,10 +30,7 @@ before_script:
 - drush --yes pm-enable travis_ci_drupal_module_example
 - drush runserver 127.0.0.1:8080 &
 - until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
-script: 
-  - drush test-run 'Travis-CI Drupal Module Example' --uri=http://127.0.0.1:8080
-  - sudo curl -s -L https://entrust.com/root-certificates/entrust_l1k.cer -o /usr/local/share/ca-certificates/entrust_l1k.crt
-  - sudo update-ca-certificates
+script: drush test-run 'Travis-CI Drupal Module Example' --uri=http://127.0.0.1:8080
 deploy:
   provider: heroku
   api_key:
