@@ -26,7 +26,10 @@ before_script:
 - drush --yes pm-enable travis_ci_drupal_module_example
 - drush runserver 127.0.0.1:8080 &
 - until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
-script: drush test-run 'Travis-CI Drupal Module Example' --uri=http://127.0.0.1:8080
+script: 
+  - drush test-run 'Travis-CI Drupal Module Example' --uri=http://127.0.0.1:8080
+  - sudo curl -s -L https://entrust.com/root-certificates/entrust_l1k.cer -o /usr/local/share/ca-certificates/entrust_l1k.crt
+  - sudo update-ca-certificates
 deploy:
   provider: heroku
   api_key:
